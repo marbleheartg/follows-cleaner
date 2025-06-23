@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --accent: oklch(0 0 0);
+    --dark-accent: oklch(0 0 0);
+    --inactive-accent: oklch(0 0 0);
+  }
+
+  * {
+    @apply font-(family-name:--inter) font-normal;
+    @apply select-none touch-manipulation;
+  }
+
+  body {
+    @apply h-screen bg-black text-white;
+  }
+
+  h1 {
+    @apply font-bold text-xl pointer-events-none;
+  }
+
+  img {
+    @apply object-contain pointer-events-none;
+  }
+
+  button {
+    @apply bg-white text-black px-3 py-1 pb-1.5 cursor-pointer rounded-lg;
+  }
+
+  input[type="text"] {
+    @apply bg-white text-black w-full border px-3 py-2 pb-2.5 rounded-lg;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+  }
+  input[type="search"]::-moz-search-clear {
+    display: none;
+  }
+  input[type="search"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+}
