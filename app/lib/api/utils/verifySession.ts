@@ -2,7 +2,7 @@ import { createClient } from "@farcaster/quick-auth"
 
 const client = createClient()
 
-export async function verifySession(session: string): Promise<number> {
+export default async function verifySession(session: string): Promise<number> {
   const { NEXT_PUBLIC_HOST } = process.env
   if (!NEXT_PUBLIC_HOST) throw new Error("VerifyCredentialsNotConfigured")
 

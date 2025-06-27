@@ -6,7 +6,15 @@ export default function clientErrorHandling() {
   }
 
   window.onerror = (message, source, lineno, colno, error) =>
-    reportClientError({ type: "js-error", ua: navigator.userAgent, message, source, lineno, colno, stack: error?.stack })
+    reportClientError({
+      type: "js-error",
+      ua: navigator.userAgent,
+      message,
+      source,
+      lineno,
+      colno,
+      stack: error?.stack,
+    })
 
   window.addEventListener(
     "error",

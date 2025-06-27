@@ -2,18 +2,17 @@
 
 @layer base {
   :root {
-    --accent: oklch(0 0 0);
-    --dark-accent: oklch(0 0 0);
-    --inactive-accent: oklch(0 0 0);
+    --accent: oklch(0.629 0.218 21.73);
   }
 
   * {
-    @apply font-(family-name:--inter) font-normal;
+    @apply font-(family-name:--rem);
     @apply select-none touch-manipulation;
   }
 
   body {
-    @apply h-screen bg-black text-white;
+    @apply h-screen font-medium text-black;
+    @apply bg-gradient-to-br from-[#50B8E2] to-[#2196C5];
   }
 
   h1 {
@@ -21,7 +20,7 @@
   }
 
   img {
-    @apply object-contain pointer-events-none;
+    @apply pointer-events-none;
   }
 
   button {
@@ -31,7 +30,6 @@
   input[type="text"] {
     @apply bg-white text-black w-full border px-3 py-2 pb-2.5 rounded-lg;
   }
-
   input[type="search"]::-webkit-search-decoration,
   input[type="search"]::-webkit-search-cancel-button,
   input[type="search"]::-webkit-search-results-button,
@@ -45,5 +43,40 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+  }
+
+  @keyframes fly {
+    0% {
+      transform: translateY(5);
+    }
+    50% {
+      transform: translateY(-5px) translateX(6px);
+    }
+    100% {
+      transform: translateY(5);
+    }
+  }
+
+  .animate-fly {
+    animation: fly 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes brows {
+    0% {
+      transform: translateY(0);
+    }
+    98% {
+      transform: translateY(0);
+    }
+    99% {
+      transform: translateY(-3px) translateX(1px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-brows {
+    animation: brows 5s linear infinite;
   }
 }

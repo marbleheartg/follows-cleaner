@@ -1,28 +1,29 @@
 {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjEwMjEyMTQsInR5cGUiOiJhdXRoIiwia2V5IjoiMHgzMTU3NDk3YjgyZUM5MUEyMzRmMTFFZTQ0NTUzRDJhMzAzZThkNTllIn0",
+    "payload": "eyJkb21haW4iOiJmb2xsb3dzLWNsZWFuZXIueHl6In0",
+    "signature": "1P+vC8W+331mTqXyjJlIviW6w0eexZNb3AE30Pa1bMZi4Afu6mybHW9c98NB4uGIrNF/HTTjJSue1KWjKOjeWRs="
+  },
   "frame": {
     "version": "1",
-    "name": "NAME",
-    "iconUrl": "https://HOST.TLD/images/og/manifest/logo.png",
-    "homeUrl": "https://HOST.TLD",
-    "splashImageUrl": "https://HOST.TLD/images/og/splash.png",
+    "name": "follows cleaner",
+    "iconUrl": "https://follows-cleaner.xyz/images/og/manifest/icon.png",
+    "homeUrl": "https://follows-cleaner.xyz",
+    "splashImageUrl": "https://follows-cleaner.xyz/images/og/splash.png",
     "splashBackgroundColor": "#ffffff",
-    "subtitle": "SUBTITLE",
-    "description": "DESCRIPTION",
-    "primaryCategory": "PRIMARY_CATEGORY",
-    "tagline": "TAGLINE",
-    "ogTitle": "OG_TITLE",
-    "ogDescription": "OG_DESCRIPTION",
-    "ogImageUrl": "https://HOST.TLD/images/og/manifest/image.png",
-    "heroImageUrl": "https://HOST.TLD/images/og/manifest/image.png",
-    "webhookUrl": "https://HOST.TLD/api/webhook",
-    "canonicalDomain": "HOST.TLD",
-    "screenshotUrls": [
-      "https://HOST.TLD/images/og/manifest/screenshots/1.jpg",
-      "https://HOST.TLD/images/og/manifest/screenshots/2.jpg",
-      "https://HOST.TLD/images/og/manifest/screenshots/3.jpg"
-    ],
-    "requiredChains": ["eip155:10143"],
-    "requiredCapabilities": ["actions.viewProfile", "actions.composeCast", "actions.ready", "actions.close"],
-    "tags": ["tag", "tag", "tag", "tag", "tag"]
+    "subtitle": "clean your following easily",
+    "description": "clean your following easily",
+    "primaryCategory": "utility",
+    "tagline": "clean your following easily",
+    "ogTitle": "clean your following easily",
+    "ogDescription": "clean your following easily",
+    "ogImageUrl": "https://follows-cleaner.xyz/images/og/manifest/ogImage.png",
+    "heroImageUrl": "https://follows-cleaner.xyz/images/og/manifest/ogImage.png",
+    "webhookUrl": "https://follows-cleaner.xyz/api/webhook",
+    "canonicalDomain": "follows-cleaner.xyz",
+    "screenshotUrls": ["https://follows-cleaner.xyz/images/og/manifest/screenshots/1.jpg"],
+    "requiredChains": [],
+    "requiredCapabilities": ["actions.viewProfile", "actions.ready"],
+    "tags": ["following", "clean", "farcaster", "social", "followers"]
   }
 }

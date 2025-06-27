@@ -1,27 +1,31 @@
 import clsx from "clsx"
 import Image from "next/image"
-import { NavLink } from "react-router"
 import { store } from "../../lib/store"
 
 const Header = () => {
   const { user } = store()
 
   return (
-    <header className={clsx("py-8", "flex justify-between items-center")}>
-      <div>Logo</div>
+    <header className={clsx("fixed top-10 inset-x-0")}>
+      <div className={clsx("relative aspect-[308/85] w-85 mx-auto")}>
+        <Image src={"/images/global/logo.svg"} fill unoptimized alt="logo" />
 
-      <NavLink
-        to="/profile"
-        className={clsx(
-          "relative",
-          "aspect-square w-[32px]",
-          "bg-[var(--accent)]",
-          "rounded-full overflow-hidden",
-          "outline-2 outline-[var(--accent)]",
-        )}
-      >
-        <Image src={user?.pfpUrl || "/images/user.svg"} sizes="32px" priority fill alt="profile" />
-      </NavLink>
+        <Image
+          src={"/images/global/ears.svg"}
+          width={22}
+          height={16.5}
+          alt="ears"
+          className={clsx("absolute top-[36px] left-[97.5px] z-10")}
+        />
+
+        <Image
+          src={user?.pfpUrl || "/images/global/user.svg"}
+          width={19}
+          height={19}
+          alt="pfp"
+          className={clsx("absolute top-[40px] left-[99.5px]", "rounded-full")}
+        />
+      </div>
     </header>
   )
 }

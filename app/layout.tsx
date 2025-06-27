@@ -1,12 +1,18 @@
-import { Inter } from "next/font/google"
+import { Itim, REM } from "next/font/google"
 import { ReactNode } from "react"
 import "./globals.css"
 import { FRAME, PROJECT_DESCRIPTION, PROJECT_TITLE } from "./lib/constants"
 import ImagesPreload from "./lib/imagesPreload"
 
-const inter = Inter({
-  variable: "--inter",
+const rem = REM({
+  variable: "--rem",
   weight: "variable",
+  subsets: ["latin"],
+})
+
+const itim = Itim({
+  variable: "--itim",
+  weight: "400",
   subsets: ["latin"],
 })
 
@@ -22,9 +28,9 @@ export default function RootLayout({
         <meta name="fc:frame" content={JSON.stringify(FRAME)} />
         <title>{PROJECT_TITLE}</title>
         <meta name="description" content={PROJECT_DESCRIPTION} />
-        <link rel="icon" href="/images/global/logo.svg"></link>
+        <link rel="icon" type="image/svg+xml" href="/images/global/logo.svg" />
       </head>
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${rem.variable} ${itim.variable} antialiased`}>
         <ImagesPreload />
         {children}
       </body>
