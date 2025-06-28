@@ -1,10 +1,10 @@
-import axiosInstance from "@/lib/api/config"
-import { User, UserStats } from "@/lib/api/types"
+import { Following, FollowStats, User } from "@/lib/api/types"
 import sdk from "@farcaster/frame-sdk"
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import clsx from "clsx"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { store } from "../../lib/store"
 
 const check = (
@@ -19,43 +19,58 @@ const cross = (
 )
 
 export default function Home() {
-  const { user } = store()
+  const { user, session } = store()
 
-  const { data: follows, isLoading: followsIsLoading } = useQuery<{ object: string; user: User }[]>({
-    queryKey: ["follows", user?.fid],
-    queryFn: async () => {
-      const res = await axiosInstance.get("/api/follows")
-
-      const follows = res?.data
-
-      if (!follows) return []
-      if (!Array.isArray(res.data)) return []
-
-      const array = [...follows]
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[array[i], array[j]] = [array[j], array[i]]
-      }
-
-      return array
-    },
+  const { data: userStats, isLoading: userStatsIsLoading } = useQuery<User>({
+    queryKey: ["userStats", user?.fid],
+    queryFn: async () => await axios.get(`/api/userStats?fid=${user?.fid}`).then(res => res.data),
     enabled: !!user?.fid,
   })
 
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<Following>({
+    queryKey: ["follows", user?.fid],
+    queryFn: async ({ pageParam = null }) => {
+      const res = await axios.get<Following>("/api/follows", { params: { fid: user?.fid, cursor: pageParam } })
+      const following = res?.data
+
+      if (!following) throw new Error("Invalid response")
+
+      const users = [...following.users]
+
+      for (let i = users.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[users[i], users[j]] = [users[j], users[i]]
+      }
+
+      return { ...following, users }
+    },
+    initialPageParam: null,
+    getNextPageParam: lastPage => lastPage.next.cursor ?? undefined,
+    maxPages: 3,
+    enabled: !!user?.fid,
+  })
+
+  const follows = data?.pages.flatMap(page => page.users)
+  const [askedAddMiniApp, setAskedAddMiniApp] = useState(false)
   const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (follows?.length && count >= follows?.length - 1 && !isFetchingNextPage && hasNextPage) fetchNextPage()
+    if (!askedAddMiniApp && count >= 10) {
+      setAskedAddMiniApp(true)
+      if (!store.getState().client?.added) sdk.actions.addMiniApp().catch(() => {})
+    }
+  }, [count, follows, isFetchingNextPage, hasNextPage])
 
   const currentFid = follows?.[count]?.user?.fid
 
-  const { data: userStats, isLoading: userStatsIsLoading } = useQuery<UserStats>({
-    queryKey: ["userStats", user?.fid, currentFid],
-    queryFn: async () => {
-      const res = await axiosInstance.get(`/api/userStats?fid=${currentFid}`)
-      return res.data
-    },
+  const { data: followStats, isLoading: followStatsIsLoading } = useQuery<FollowStats>({
+    queryKey: ["followStats", user?.fid, currentFid],
+    queryFn: async () => await axios.get(`/api/followStats?fid=${currentFid}`).then(res => res.data),
     enabled: !!user?.fid && !!currentFid,
   })
 
-  const isLoading = followsIsLoading || userStatsIsLoading
+  const isLoading = isFetchingNextPage || followStatsIsLoading || userStatsIsLoading
 
   return (
     <>
@@ -88,9 +103,9 @@ export default function Home() {
         <div className={clsx("flex text-center")}>
           {[
             "pro",
-            isLoading ? "..." : userStats?.pro.status ? check : cross,
+            isLoading ? "..." : followStats?.pro.status ? check : cross,
             "-",
-            isLoading ? "..." : userStats?.pro?.date?.slice(0, 10) ?? "-",
+            isLoading ? "..." : followStats?.pro?.date?.slice(0, 10) ?? "-",
           ].map((val, i) => (
             <div
               key={i}
@@ -98,7 +113,7 @@ export default function Home() {
                 "flex justify-center items-center",
                 "basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 last:border-r-0",
                 "capitalize truncate",
-                userStats?.pro?.date && "last:text-xs",
+                followStats?.pro?.date && "last:text-xs",
               )}
             >
               {val}
@@ -109,9 +124,9 @@ export default function Home() {
         <div className={clsx("flex text-center")}>
           {[
             "casts",
-            isLoading ? "..." : userStats?.casts.status ? check : cross,
-            isLoading ? "..." : userStats?.casts?.value === 150 ? "150+" : userStats?.casts?.value ?? 0,
-            isLoading ? "..." : userStats?.casts.date?.slice(0, 10) ?? "-",
+            isLoading ? "..." : followStats?.casts.status ? check : cross,
+            isLoading ? "..." : followStats?.casts?.value === 150 ? "150+" : followStats?.casts?.value ?? 0,
+            isLoading ? "..." : followStats?.casts.date?.slice(0, 10) ?? "-",
           ].map((val, i) => (
             <div
               key={i}
@@ -120,7 +135,7 @@ export default function Home() {
                 "basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 border-b-2 last:border-r-0",
                 "capitalize truncate",
 
-                userStats?.casts.date && "last:text-xs",
+                followStats?.casts.date && "last:text-xs",
               )}
             >
               {val}
@@ -180,11 +195,12 @@ export default function Home() {
             )}
             onClick={() => {
               if (!follows?.length) return
+              if (count <= 0) return
 
               if (store.getState().capabilities?.includes("haptics.impactOccurred"))
                 sdk.haptics.impactOccurred("medium")
 
-              setCount(prev => (prev > 0 ? prev - 1 : follows?.length - 1))
+              setCount(prev => prev - 1)
             }}
           >
             <Image src={"/images/global/l-slider.svg"} alt="l-slider" fill className="object-cover" />
@@ -213,8 +229,8 @@ export default function Home() {
         <div className={clsx("flex text-center")}>
           {[
             "neynar",
-            isLoading ? "..." : userStats?.neynar.status ? check : cross,
-            isLoading ? "..." : userStats?.neynar.value ?? 0,
+            isLoading ? "..." : followStats?.neynar.status ? check : cross,
+            isLoading ? "..." : followStats?.neynar.value ?? 0,
             "-",
           ].map((val, i) => (
             <div
@@ -233,9 +249,9 @@ export default function Home() {
         <div className={clsx("flex text-center")}>
           {[
             "funded",
-            isLoading ? "..." : userStats?.funded.status ? check : cross,
-            isLoading ? "..." : userStats?.funded?.value ? `$${Math.floor(userStats?.funded.value)}` : "$0",
-            isLoading ? "..." : userStats?.funded?.date?.slice(0, 10) ?? "-",
+            isLoading ? "..." : followStats?.funded.status ? check : cross,
+            isLoading ? "..." : followStats?.funded?.value ? `$${Math.floor(followStats?.funded.value)}` : "$0",
+            isLoading ? "..." : followStats?.funded?.date?.slice(0, 10) ?? "-",
           ].map((val, i) => (
             <div
               key={i}
@@ -244,7 +260,7 @@ export default function Home() {
                 "basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 last:border-r-0",
                 "capitalize truncate",
 
-                userStats?.funded?.date && "last:text-xs",
+                followStats?.funded?.date && "last:text-xs",
               )}
             >
               {val}
@@ -255,9 +271,9 @@ export default function Home() {
         <div className={clsx("flex text-center")}>
           {[
             "builder",
-            isLoading ? "..." : userStats?.builder?.status ? check : cross,
-            isLoading ? "..." : userStats?.builder?.value ?? "0",
-            isLoading ? "..." : userStats?.builder?.date?.slice(0, 10) ?? "-",
+            isLoading ? "..." : followStats?.builder?.status ? check : cross,
+            isLoading ? "..." : followStats?.builder?.value || "-",
+            isLoading ? "..." : followStats?.builder?.date?.slice(0, 10) ?? "-",
           ].map((val, i) => (
             <div
               key={i}
@@ -266,7 +282,7 @@ export default function Home() {
                 "basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 last:border-r-0",
                 "capitalize truncate",
 
-                userStats?.builder?.date && "last:text-xs",
+                followStats?.builder?.date && "last:text-xs",
               )}
             >
               {val}
@@ -277,8 +293,8 @@ export default function Home() {
         <div className={clsx("flex text-center")}>
           {[
             "followers",
-            isLoading ? "..." : userStats?.followers.status ? check : cross,
-            isLoading ? "..." : userStats?.followers.value ?? 0,
+            isLoading ? "..." : followStats?.followers.status ? check : cross,
+            isLoading ? "..." : followStats?.followers.value ?? 0,
             "-",
           ].map((val, i) => (
             <div
@@ -297,7 +313,7 @@ export default function Home() {
         <div className={clsx("absolute -bottom-5 -left-6", "aspect-[88/62] w-20", "-rotate-8")}>
           <div className="flex items-center absolute top-1/2 left-1/2 -translate-1/2 -rotate-10 z-10 truncate max-w-15">
             <span className="truncate">{count + 1}</span>/
-            <span className="truncate">{followsIsLoading ? "..." : follows?.length}</span>
+            <span className="truncate">{userStatsIsLoading ? "..." : userStats?.following_count}</span>
           </div>
           <Image src={"/images/global/cloud.svg"} alt="cloud" fill />
         </div>

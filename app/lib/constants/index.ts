@@ -6,7 +6,7 @@ const PROJECT_DESCRIPTION = "clean your following easily"
 
 const FRAME = {
   version: "next",
-  imageUrl: `https://${process.env.NEXT_PUBLIC_HOST}/images/og/frame/ogCastImage.png`,
+  imageUrl: `https://${process.env.NEXT_PUBLIC_HOST}/images/og/frame/ogCastImage.jpg`,
   aspectRatio: "3:2",
   button: {
     title: "clean",

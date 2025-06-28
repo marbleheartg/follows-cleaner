@@ -11,30 +11,34 @@ export const config = {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (pathname.startsWith("/api")) {
-    // if (["/api/clientError", "/api/userStats"].includes(pathname)) return NextResponse.next()
+  if (!pathname.startsWith("/api")) return NextResponse.next()
+  if (request.method === "GET") return NextResponse.next()
 
-    const authHeader = request.headers.get("authorization")
+  const protectedRoutes = ["/api/login"]
 
-    if (!authHeader || !authHeader.startsWith("Bearer "))
-      return new NextResponse(JSON.stringify({ error: "Unauthorized: No token provided" }), {
+  if (!protectedRoutes.includes(pathname)) return NextResponse.next()
+
+  const authHeader = request.headers.get("authorization")
+
+  if (!authHeader?.startsWith("Bearer "))
+    return NextResponse.json(
+      { error: "Unauthorized: No token provided" },
+      {
         status: 401,
         headers: { "content-type": "application/json" },
-      })
-
-    const session = authHeader.split(" ")[1]
-
-    const fid = await verifySession(session)
-
-    const requestHeaders = new Headers(request.headers)
-    requestHeaders.set("fid", fid.toString())
-
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
       },
-    })
-  }
+    )
 
-  return NextResponse.next()
+  const session = authHeader.split(" ")[1]
+
+  const fid = await verifySession(session)
+
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set("fid", fid.toString())
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  })
 }

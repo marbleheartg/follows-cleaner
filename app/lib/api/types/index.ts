@@ -1,16 +1,10 @@
-export type UserStats = {
+export type FollowStats = {
   pro: { status: boolean; date: string | null }
   casts: { status: boolean; value: number; date: string | null }
   neynar: { status: boolean; value: number }
   funded: { status: boolean; value: number; date: string | null }
   builder: { status: boolean; value: number; date: string | null }
   followers: { status: boolean; value: number }
-}
-
-export interface TxsData {
-  status: string
-  message: string
-  result: Result[]
 }
 
 export interface Result {
@@ -36,7 +30,7 @@ export interface Result {
   functionName: string
 }
 
-export interface ResultData {
+export interface AccountVerifications {
   result: Result
 }
 
@@ -52,7 +46,36 @@ export interface Verification {
   verifiedAt: number
 }
 
-export interface CastsData {
+export interface EtherscanTxs {
+  status: string
+  message: string
+  result: Result[]
+}
+
+export interface Result {
+  blockNumber: string
+  blockHash: string
+  timeStamp: string
+  hash: string
+  nonce: string
+  transactionIndex: string
+  from: string
+  to: string
+  value: string
+  gas: string
+  gasPrice: string
+  input: string
+  methodId: string
+  functionName: string
+  contractAddress: string
+  cumulativeGasUsed: string
+  txreceipt_status: string
+  gasUsed: string
+  confirmations: string
+  isError: string
+}
+
+export interface UserCasts {
   casts: Cast[]
   next: Next
 }
@@ -917,7 +940,7 @@ export interface Next {
   cursor: string
 }
 
-export interface UsersData {
+export interface UserBulk {
   users: User[]
 }
 
@@ -1038,4 +1061,137 @@ export interface ViewerContext2 {
   followed_by: boolean
   blocking: boolean
   blocked_by: boolean
+}
+
+export interface Following {
+  users: User[]
+  next: Next
+}
+
+export interface User {
+  object: string
+  user: User2
+}
+
+export interface User2 {
+  object: string
+  fid: number
+  username: string
+  display_name: string
+  custody_address: string
+  pro: Pro
+  pfp_url: string
+  profile: Profile
+  follower_count: number
+  following_count: number
+  verifications: string[]
+  verified_addresses: VerifiedAddresses
+  verified_accounts: VerifiedAccount[]
+  power_badge: boolean
+  experimental: Experimental
+  viewer_context: ViewerContext2
+  score: number
+}
+
+export interface Pro {
+  status: string
+  subscribed_at: string
+  expires_at: string
+}
+
+export interface Profile {
+  bio: Bio
+  location: Location
+  banner: Banner
+}
+
+export interface Bio {
+  text: string
+  mentioned_profiles: MentionedProfile[]
+  mentioned_profiles_ranges: MentionedProfilesRange[]
+  mentioned_channels: MentionedChannel[]
+  mentioned_channels_ranges: MentionedChannelsRange[]
+}
+
+export interface MentionedProfile {
+  object: string
+  fid: number
+  username: string
+  display_name: string
+  pfp_url: string
+  custody_address: string
+}
+
+export interface MentionedProfilesRange {
+  start: number
+  end: number
+}
+
+export interface MentionedChannel {
+  id: string
+  name: string
+  object: string
+  image_url: string
+  viewer_context: ViewerContext
+}
+
+export interface ViewerContext {
+  following: boolean
+  role: string
+}
+
+export interface MentionedChannelsRange {
+  start: number
+  end: number
+}
+
+export interface Location {
+  latitude: number
+  longitude: number
+  address: Address
+  radius: number
+}
+
+export interface Address {
+  city: string
+  state: string
+  state_code: string
+  country: string
+  country_code: string
+}
+
+export interface Banner {
+  url: string
+}
+
+export interface VerifiedAddresses {
+  eth_addresses: string[]
+  sol_addresses: string[]
+  primary: Primary
+}
+
+export interface Primary {
+  eth_address: string
+  sol_address: string
+}
+
+export interface VerifiedAccount {
+  platform: string
+  username: string
+}
+
+export interface Experimental {
+  deprecation_notice: string
+  neynar_user_score: number
+}
+
+export interface ViewerContext2 {
+  following: boolean
+  followed_by: boolean
+  blocking: boolean
+  blocked_by: boolean
+}
+
+export interface Next {
+  cursor: string
 }
