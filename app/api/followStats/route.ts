@@ -4,6 +4,7 @@ import { ASSETS } from "@/lib/constants"
 import axios from "axios"
 import { NextRequest, NextResponse } from "next/server"
 import { createPublicClient, formatUnits, http, parseAbiItem } from "viem"
+import { mainnet } from "viem/chains"
 
 const { NEYNAR_API_KEY, ETHERSCAN_API_KEY } = process.env
 
@@ -69,7 +70,7 @@ export async function GET(req: NextRequest) {
       firstTxTimestamp = await axios
         .get<EtherscanTxs>(`https://api.etherscan.io/v2/api`, {
           params: {
-            chainid: "8453",
+            chainid: mainnet.id,
             module: "account",
             action: "txlist",
             startblock: "0",

@@ -70,7 +70,7 @@ export default function Home() {
     enabled: !!user?.fid && !!currentFid,
   })
 
-  const isLoading = isFetchingNextPage || followStatsIsLoading || userStatsIsLoading
+  const isLoading = userStatsIsLoading || isFetchingNextPage || followStatsIsLoading
 
   return (
     <>
