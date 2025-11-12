@@ -19,7 +19,7 @@ const cross = (
 )
 
 export default function Home() {
-  const { user, session } = store()
+  const { user } = store()
 
   const { data: userStats, isLoading: userStatsIsLoading } = useQuery<User>({
     queryKey: ["userStats", user?.fid],
@@ -86,13 +86,7 @@ export default function Home() {
       >
         <div className={clsx("flex text-center")}>
           {["type", "status", "value", "date"].map((val, i) => (
-            <div
-              key={i}
-              className={clsx(
-                "relative basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 last:border-r-0",
-                "capitalize truncate",
-              )}
-            >
+            <div key={i} className={clsx("relative basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 last:border-r-0", "capitalize truncate")}>
               {val}
 
               {/* <div className="absolute left-0 top-0">i</div> */}
@@ -148,15 +142,11 @@ export default function Home() {
             <div className="bg-gray-300 w-8 h-8 animate-pulse rounded-full z-10" />
           ) : (
             <div
-              className={clsx(
-                "relative aspect-square w-8 mt-0.5",
-                "rounded-full cursor-pointer border overflow-hidden z-10",
-              )}
+              className={clsx("relative aspect-square w-8 mt-0.5", "rounded-full cursor-pointer border overflow-hidden z-10")}
               onClick={() => {
                 if (!currentFid) return
 
-                if (store.getState().capabilities?.includes("haptics.impactOccurred"))
-                  sdk.haptics.impactOccurred("light")
+                if (store.getState().capabilities?.includes("haptics.impactOccurred")) sdk.haptics.impactOccurred("light")
 
                 sdk.actions.viewProfile({ fid: currentFid })
               }}
@@ -197,8 +187,7 @@ export default function Home() {
               if (!follows?.length) return
               if (count <= 0) return
 
-              if (store.getState().capabilities?.includes("haptics.impactOccurred"))
-                sdk.haptics.impactOccurred("medium")
+              if (store.getState().capabilities?.includes("haptics.impactOccurred")) sdk.haptics.impactOccurred("medium")
 
               setCount(prev => prev - 1)
             }}
@@ -215,8 +204,7 @@ export default function Home() {
             onClick={() => {
               if (!follows?.length) return
 
-              if (store.getState().capabilities?.includes("haptics.impactOccurred"))
-                sdk.haptics.impactOccurred("medium")
+              if (store.getState().capabilities?.includes("haptics.impactOccurred")) sdk.haptics.impactOccurred("medium")
 
               setCount(prev => (prev < follows?.length - 1 ? prev + 1 : 0))
             }}
@@ -227,23 +215,20 @@ export default function Home() {
         </div>
 
         <div className={clsx("flex text-center")}>
-          {[
-            "neynar",
-            isLoading ? "..." : followStats?.neynar.status ? check : cross,
-            isLoading ? "..." : followStats?.neynar.value ?? 0,
-            "-",
-          ].map((val, i) => (
-            <div
-              key={i}
-              className={clsx(
-                "flex justify-center items-center",
-                "basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 last:border-r-0",
-                "capitalize truncate",
-              )}
-            >
-              {val}
-            </div>
-          ))}
+          {["neynar", isLoading ? "..." : followStats?.neynar.status ? check : cross, isLoading ? "..." : followStats?.neynar.value ?? 0, "-"].map(
+            (val, i) => (
+              <div
+                key={i}
+                className={clsx(
+                  "flex justify-center items-center",
+                  "basis-1/4 pt-1 pb-1.5 border-t-2 border-r-2 last:border-r-0",
+                  "capitalize truncate",
+                )}
+              >
+                {val}
+              </div>
+            ),
+          )}
         </div>
 
         <div className={clsx("flex text-center")}>
@@ -312,8 +297,7 @@ export default function Home() {
 
         <div className={clsx("absolute -bottom-5 -left-6", "aspect-[88/62] w-20", "-rotate-8")}>
           <div className="flex items-center absolute top-1/2 left-1/2 -translate-1/2 -rotate-10 z-10 truncate max-w-15">
-            <span className="truncate">{count + 1}</span>/
-            <span className="truncate">{userStatsIsLoading ? "..." : userStats?.following_count}</span>
+            <span className="truncate">{count + 1}</span>/<span className="truncate">{userStatsIsLoading ? "..." : userStats?.following_count}</span>
           </div>
           <Image src={"/images/global/cloud.svg"} alt="cloud" fill />
         </div>
@@ -323,13 +307,7 @@ export default function Home() {
         </div>
 
         <div className={clsx("absolute bottom-3 right-5", "aspect-[35/40] w-7")}>
-          <Image
-            src={"/images/global/brows.svg"}
-            alt="brows"
-            width={20}
-            height={14}
-            className="absolute left-2.5 -top-0.5 animate-brows"
-          />
+          <Image src={"/images/global/brows.svg"} alt="brows" width={20} height={14} className="absolute left-2.5 -top-0.5 animate-brows" />
           <Image src={"/images/global/smile.svg"} alt="smile" fill />
         </div>
 

@@ -2,7 +2,7 @@ import { arbitrum, base, mainnet, optimism } from "viem/chains"
 
 const PROJECT_TITLE = "follows cleaner"
 
-const PROJECT_DESCRIPTION = "clean your following easily"
+const PROJECT_DESCRIPTION = "clean your follows easily"
 
 const FRAME = {
   version: "next",

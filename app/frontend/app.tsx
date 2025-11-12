@@ -2,7 +2,6 @@ import clientErrorHandling from "@/lib/clientErrorsReporting"
 import Providers from "@/lib/providers"
 import { updateStore } from "@/lib/store"
 import sdk from "@farcaster/frame-sdk"
-import axios from "axios"
 import clsx from "clsx"
 import Image from "next/image"
 import { useEffect } from "react"
@@ -20,14 +19,6 @@ export default function App() {
       updateStore({ user, client, capabilities })
 
       await sdk.actions.ready({ disableNativeGestures: true })
-
-      try {
-        const { token: session } = await sdk.quickAuth.getToken()
-        updateStore({ session })
-        axios.post("/api/login", {}, { headers: { Authorization: `Bearer ${session}` } })
-      } catch (error) {
-        await sdk.actions.close()
-      }
     })()
   }, [])
 
@@ -61,11 +52,7 @@ export default function App() {
           <Image src={"/images/global/baloon.svg"} fill alt="baloon" />
         </div>
 
-        <img
-          src="/images/global/bg.svg"
-          alt="bg"
-          className={clsx("fixed top-0 left-0 w-screen h-screen object-fill -z-10")}
-        />
+        <img src="/images/global/bg.svg" alt="bg" className={clsx("fixed top-0 left-0 w-screen h-screen object-fill -z-10")} />
       </Providers>
     </div>
   )
