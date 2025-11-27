@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const { data: usersData } = await axios.get<UserBulk>(`https://api.neynar.com/v2/farcaster/user/bulk`, {
       headers: { "x-api-key": NEYNAR_API_KEY },
       params: { fids: fid },
-      timeout: 3000,
+      timeout: 1500,
     })
 
     // console.log(1)
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const { data: castsData } = await axios.get<UserCasts>(`https://api.neynar.com/v2/farcaster/feed/user/casts`, {
       headers: { "x-api-key": NEYNAR_API_KEY },
       params: { limit: 150, fid },
-      timeout: 3000,
+      timeout: 1500,
     })
 
     // console.log(2)
@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
                 address,
                 apikey: ETHERSCAN_API_KEY,
               },
-              timeout: 3000,
+              timeout: 1500,
             })
             .then(res => {
               // console.log(4)
@@ -102,7 +102,7 @@ export async function GET(req: NextRequest) {
       axios
         .get<AccountVerifications>(`https://api.farcaster.xyz/fc/account-verifications`, {
           params: { platform: "github", fid: user.fid },
-          timeout: 3000,
+          timeout: 1500,
         })
         .then(res => {
           // console.log(5)
