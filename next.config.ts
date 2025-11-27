@@ -6,6 +6,7 @@ if (!NEXT_PUBLIC_HOST) throw new Error("NextConfigCredentialsNotConfigured")
 const nextConfig: NextConfig = {
   allowedDevOrigins: [NEXT_PUBLIC_HOST],
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

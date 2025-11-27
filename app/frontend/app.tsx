@@ -1,6 +1,7 @@
 import clientErrorHandling from "@/lib/clientErrorsReporting"
 import Providers from "@/lib/providers"
 import { updateStore } from "@/lib/store"
+import preloadImages from "@/lib/utils/preloadImages"
 import sdk from "@farcaster/frame-sdk"
 import clsx from "clsx"
 import Image from "next/image"
@@ -8,17 +9,40 @@ import { useEffect } from "react"
 import Header from "./components/Header"
 import Home from "./pages/Home"
 
+const imgSrcs = [
+  "check.svg",
+  "cross.svg",
+  "user.svg",
+  "l-slider.svg",
+  "r-slider.svg",
+  "rainbow.svg",
+  "cloud.svg",
+  "sun.svg",
+  "brows.svg",
+  "smile.svg",
+  "stroke.svg",
+  "toy-hammer.svg",
+  "button-stroke.svg",
+  "baloon.svg",
+  "bg.svg",
+]
+
 export default function App() {
   useEffect(() => {
     clientErrorHandling()
     ;(async function () {
-      const { user, client } = await sdk.context
+      try {
+        const { user, client } = await sdk.context
+        const capabilities = await sdk.getCapabilities()
+        updateStore({ user, client, capabilities })
+      } catch {}
 
-      const capabilities = await sdk.getCapabilities()
-
-      updateStore({ user, client, capabilities })
-
-      await sdk.actions.ready({ disableNativeGestures: true })
+      try {
+        await preloadImages(imgSrcs.map(src => `/images/global/${src}`))
+      } catch {
+      } finally {
+        await sdk.actions.ready({ disableNativeGestures: true }).catch(() => {})
+      }
     })()
   }, [])
 
@@ -48,7 +72,7 @@ export default function App() {
           need to pay for tech stuff`}
         </div>
 
-        <div className={clsx("fixed top-42 -right-1 z-20", "aspect-[62/99] w-14", "-rotate-27", "animate-fly")}>
+        <div className={clsx("fixed top-42 -right-1 z-20", "aspect-62/99 w-14", "-rotate-27", "animate-fly")}>
           <Image src={"/images/global/baloon.svg"} fill alt="baloon" />
         </div>
 

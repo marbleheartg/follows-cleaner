@@ -1,4 +1,4 @@
-import { arbitrum, base, mainnet, optimism } from "viem/chains"
+import { arbitrum, base, Chain, mainnet, optimism } from "viem/chains"
 
 const PROJECT_TITLE = "follows cleaner"
 
@@ -20,7 +20,7 @@ const FRAME = {
   },
 }
 
-const ASSETS = [
+const ASSETS: { chain: Chain; usdc: `0x${string}`; usdt: `0x${string}` }[] = [
   {
     chain: mainnet,
     usdc: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",

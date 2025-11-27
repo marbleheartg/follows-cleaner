@@ -2,7 +2,6 @@ import { Itim, REM } from "next/font/google"
 import { ReactNode } from "react"
 import "./globals.css"
 import { FRAME, PROJECT_DESCRIPTION, PROJECT_TITLE } from "./lib/constants"
-import ImagesPreload from "./lib/imagesPreload"
 
 const rem = REM({
   variable: "--rem",
@@ -30,10 +29,7 @@ export default function RootLayout({
         <meta name="description" content={PROJECT_DESCRIPTION} />
         <link rel="icon" type="image/svg+xml" href="/images/global/logo.svg" />
       </head>
-      <body className={`${rem.variable} ${itim.variable} antialiased`}>
-        <ImagesPreload />
-        {children}
-      </body>
+      <body className={`${rem.variable} ${itim.variable} antialiased`}>{children}</body>
     </html>
   )
 }
