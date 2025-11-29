@@ -8,6 +8,12 @@ import { mainnet } from "viem/chains"
 
 const { NEYNAR_API_KEY, ETHERSCAN_API_KEY } = process.env
 
+const timeout = 1000
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([promise, new Promise<T>((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms))])
+}
+
 export async function GET(req: NextRequest) {
   try {
     const fid = req.nextUrl.searchParams.get("fid")
@@ -16,20 +22,16 @@ export async function GET(req: NextRequest) {
     const { data: usersData } = await axios.get<UserBulk>(`https://api.neynar.com/v2/farcaster/user/bulk`, {
       headers: { "x-api-key": NEYNAR_API_KEY },
       params: { fids: fid },
-      timeout: 1500,
+      timeout,
     })
-
-    // console.log(1)
 
     const user = usersData.users[0]
 
     const { data: castsData } = await axios.get<UserCasts>(`https://api.neynar.com/v2/farcaster/feed/user/casts`, {
       headers: { "x-api-key": NEYNAR_API_KEY },
       params: { limit: 150, fid },
-      timeout: 1500,
+      timeout,
     })
-
-    // console.log(2)
 
     const casts = castsData.casts
 
@@ -50,19 +52,25 @@ export async function GET(req: NextRequest) {
             const client = createPublicClient({ chain: asset.chain, transport: http() })
 
             const [ethBalance, usdcBalance, usdtBalance] = await Promise.allSettled([
-              client.getBalance({ address }),
-              client.readContract({
-                address: asset.usdc,
-                abi: [balanceOfAbi],
-                functionName: "balanceOf",
-                args: [address],
-              }),
-              client.readContract({
-                address: asset.usdt,
-                abi: [balanceOfAbi],
-                functionName: "balanceOf",
-                args: [address],
-              }),
+              withTimeout(client.getBalance({ address }), timeout),
+              withTimeout(
+                client.readContract({
+                  address: asset.usdc,
+                  abi: [balanceOfAbi],
+                  functionName: "balanceOf",
+                  args: [address],
+                }),
+                timeout,
+              ),
+              withTimeout(
+                client.readContract({
+                  address: asset.usdt,
+                  abi: [balanceOfAbi],
+                  functionName: "balanceOf",
+                  args: [address],
+                }),
+                timeout,
+              ),
             ])
 
             if (ethBalance.status === "fulfilled") eth += ethBalance.value
@@ -70,8 +78,6 @@ export async function GET(req: NextRequest) {
             if (usdtBalance.status === "fulfilled") usd += usdtBalance.value
           }),
         )
-
-        // console.log(3)
 
         if (!!eth) totalUsd += Number((eth * BigInt(3000)) / BigInt(1e18))
         if (!!usd) totalUsd += Number(formatUnits(usd, 6))
@@ -89,11 +95,9 @@ export async function GET(req: NextRequest) {
                 address,
                 apikey: ETHERSCAN_API_KEY,
               },
-              timeout: 1500,
+              timeout,
             })
             .then(res => {
-              // console.log(4)
-
               const timeStamp = res.data?.result?.[0]?.timeStamp
               if (!timeStamp) return undefined
               return new Date(Number(timeStamp) * 1000).toISOString()
@@ -102,11 +106,9 @@ export async function GET(req: NextRequest) {
       axios
         .get<AccountVerifications>(`https://api.farcaster.xyz/fc/account-verifications`, {
           params: { platform: "github", fid: user.fid },
-          timeout: 1500,
+          timeout,
         })
         .then(res => {
-          // console.log(5)
-
           return res.data.result.verifications
         }),
     ])
@@ -136,8 +138,6 @@ export async function GET(req: NextRequest) {
     const pro = user?.pro
     const score = user.score
     const follower_count = user.follower_count
-
-    // console.log(6)
 
     const followStats: FollowStats = {
       pro: {

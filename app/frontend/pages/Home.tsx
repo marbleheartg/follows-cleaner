@@ -13,7 +13,7 @@ const check = (
   </div>
 )
 const cross = (
-  <div className="relative aspect-[12/11] w-4">
+  <div className="relative aspect-12/11 w-4">
     <Image src={"/images/global/cross.svg"} alt="cross" fill />
   </div>
 )
@@ -78,7 +78,7 @@ export default function Home() {
         className={clsx(
           "fixed top-42 inset-x-8",
           "flex flex-col justify-center",
-          "bg-white aspect-[304/338] ",
+          "bg-white aspect-304/338",
           "rounded-[10vw] border",
           "py-2",
           "text-sm",
@@ -137,7 +137,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className={clsx("relative flex justify-center items-center gap-1 pb-0.5 aspect-[300/38]")}>
+        <div className={clsx("relative flex justify-center items-center gap-1 pb-0.5 aspect-300/38")}>
           {isLoading ? (
             <div className="bg-gray-300 w-8 h-8 animate-pulse rounded-full z-10" />
           ) : (
