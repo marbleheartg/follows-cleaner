@@ -28,6 +28,7 @@ export default function RootLayout({
         <title>{PROJECT_TITLE}</title>
         <meta name="description" content={PROJECT_DESCRIPTION} />
         <link rel="icon" type="image/svg+xml" href="/images/global/logo.svg" />
+        <meta name="base:app_id" content="68d2c2e61aaf9981934f89bb" />
       </head>
       <body className={`${rem.variable} ${itim.variable} antialiased`}>{children}</body>
     </html>
